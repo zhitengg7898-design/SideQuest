@@ -1,0 +1,36 @@
+.header {
+  border-bottom: 1px solid #343746;
+  background-color: #1f2130;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+}
+
+.brand {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.links a {
+  color: #d7d8e0;
+  text-decoration: none;
+}
+
+.links a:hover,
+.links a:focus-visible {
+  color: #ffffff;
+}
