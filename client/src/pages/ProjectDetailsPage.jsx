@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate, } from "react-router-dom";
 
 import ProjectRoleCard from "../components/projects/ProjectRoleCard.jsx";
-import { getProjectById } from "../services/projectApi.js";
+import { getProjectById, deleteProject, } from "../services/projectApi.js";
 import styles from "./ProjectDetailsPage.module.css";
 
 function ProjectDetailsPage() {
   const { projectId } = useParams();
+  const navigate = useNavigate();
 
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [errorStatus, setErrorStatus] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     async function loadProject() {
@@ -28,6 +31,27 @@ function ProjectDetailsPage() {
 
     loadProject();
   }, [projectId]);
+
+  async function handleDeleteProject() {
+    const confirmed = window.confirm(
+      "Are you sure you want to permanently delete this project?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setDeleteError("");
+    setIsDeleting(true);
+
+    try {
+      await deleteProject(projectId);
+      navigate("/projects");
+    } catch (error) {
+      setDeleteError(error.message);
+      setIsDeleting(false);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -89,12 +113,29 @@ function ProjectDetailsPage() {
 
           <h1>{title}</h1>
           <p className={styles.tagline}>{tagline}</p>
-          <Link
-            className={styles.editLink}
-            to={`/projects/${projectId}/edit`}
-          >
-            Edit Project
-          </Link>
+          <div className={styles.projectActions}>
+            <Link
+              className={styles.editLink}
+              to={`/projects/${projectId}/edit`}
+            >
+              Edit Project
+            </Link>
+
+            <button
+              className={styles.deleteButton}
+              type="button"
+              onClick={handleDeleteProject}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Project"}
+            </button>
+          </div>
+
+          {deleteError && (
+            <div className={styles.deleteError} role="alert">
+              {deleteError}
+            </div>
+          )}
         </div>
       </header>
 
