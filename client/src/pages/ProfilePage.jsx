@@ -57,7 +57,6 @@ function ProfilePage() {
         isRecruiting={user.isRecruiting}
         major={user.major}
         name={user.name}
-        profileImageUrl={user.profileImageUrl}
         university={user.university}
         username={user.username}
       />

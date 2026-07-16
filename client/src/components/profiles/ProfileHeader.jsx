@@ -1,36 +1,25 @@
 import PropTypes from "prop-types";
 
+import { buildProfileAvatarUrl } from "./buildProfileAvatarUrl.js";
 import styles from "./ProfileHeader.module.css";
 
 function ProfileHeader({
   name,
   username,
-  profileImageUrl,
   university,
   major,
   isRecruiting,
 }) {
-  const initials = name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
+  const avatarUrl = buildProfileAvatarUrl(name);
 
   return (
     <header className={styles.header}>
       <div className={styles.identity}>
-        {profileImageUrl ? (
-          <img
-            alt=""
-            className={styles.avatar}
-            src={profileImageUrl}
-          />
-        ) : (
-          <div aria-hidden="true" className={styles.avatarFallback}>
-            {initials || "?"}
-          </div>
-        )}
+        <img
+          alt={`${name} avatar`}
+          className={styles.avatar}
+          src={avatarUrl}
+        />
 
         <div>
           <h1 className={styles.name}>{name}</h1>
@@ -53,7 +42,6 @@ function ProfileHeader({
 ProfileHeader.propTypes = {
   name: PropTypes.string.isRequired,
   username: PropTypes.string.isRequired,
-  profileImageUrl: PropTypes.string,
   university: PropTypes.string,
   major: PropTypes.string,
   isRecruiting: PropTypes.bool,
