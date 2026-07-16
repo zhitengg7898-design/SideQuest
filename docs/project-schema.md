@@ -100,7 +100,7 @@ SideQuest will display compensation information but will not process payments.
 * A separate `teamSize` field is not stored.
 * The project owner may occupy one of the listed project roles.
 * One user may occupy only one role per project during Project 3.
-* A user may submit requests for more than one role, but may only be accepted into one.
+* A user may have only one pending request per project. Each pending request targets one role.
 * A role cannot be deleted while accepted members occupy it.
 * A role’s `totalPositions` cannot be reduced below its accepted-member count.
 * Recruiting automatically closes when every role position is filled.
