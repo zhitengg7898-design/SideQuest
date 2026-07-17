@@ -94,6 +94,11 @@ export async function updateTeamMembershipStatus(
         $set: {
           status,
           updatedAt,
+          ...(status === "accepted"
+            ? {
+                joinedAt: updatedAt,
+              }
+            : {}),
         },
       },
     );
@@ -264,6 +269,101 @@ export async function getProjectMembershipsWithApplicants(
       applicantsById.get(
         membership.applicantId.toString(),
       ),
+    ),
+  }));
+}
+
+export async function getIncomingMembershipsForOwner(ownerId) {
+  const database = getDatabase();
+  const ownerObjectId = toObjectId(ownerId);
+
+  const ownedProjects = await database
+    .collection("projects")
+    .find(
+      {
+        ownerId: ownerObjectId,
+      },
+      {
+        projection: {
+          title: 1,
+          tagline: 1,
+          status: 1,
+          ownerId: 1,
+        },
+      },
+    )
+    .toArray();
+
+  if (ownedProjects.length === 0) {
+    return [];
+  }
+
+  const projectsById = new Map(
+    ownedProjects.map((project) => [
+      project._id.toString(),
+      project,
+    ]),
+  );
+
+  const memberships = await database
+    .collection("team_memberships")
+    .find({
+      projectId: {
+        $in: ownedProjects.map((project) => project._id),
+      },
+      status: "pending",
+    })
+    .sort({
+      createdAt: -1,
+    })
+    .toArray();
+
+  if (memberships.length === 0) {
+    return [];
+  }
+
+  const applicantIds = [
+    ...new Set(
+      memberships.map((membership) =>
+        membership.applicantId.toString(),
+      ),
+    ),
+  ];
+
+  const applicants = await database
+    .collection("users")
+    .find(
+      {
+        _id: {
+          $in: applicantIds.map(
+            (applicantId) => new ObjectId(applicantId),
+          ),
+        },
+      },
+      {
+        projection: {
+          name: 1,
+          username: 1,
+          profileImageUrl: 1,
+        },
+      },
+    )
+    .toArray();
+
+  const applicantsById = new Map(
+    applicants.map((applicant) => [
+      applicant._id.toString(),
+      applicant,
+    ]),
+  );
+
+  return memberships.map((membership) => ({
+    ...membership,
+    project: summarizeProject(
+      projectsById.get(membership.projectId.toString()),
+    ),
+    applicant: summarizeApplicant(
+      applicantsById.get(membership.applicantId.toString()),
     ),
   }));
 }

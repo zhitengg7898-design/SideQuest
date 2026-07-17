@@ -6,6 +6,7 @@ import {
   deletePendingTeamMembership,
   findExistingApplication,
   getApplicantMembershipsWithProjects,
+  getIncomingMembershipsForOwner,
   getProjectMembershipsWithApplicants,
   getTeamMembershipById,
   updateTeamMembershipStatus,
@@ -137,13 +138,35 @@ export async function listMyTeamMemberships(
   }
 }
 
+export async function listIncomingTeamMemberships(
+  request,
+  response,
+  next,
+) {
+  try {
+    const memberships = await getIncomingMembershipsForOwner(
+      request.user._id,
+    );
+
+    return response.status(200).json({
+      success: true,
+      data: {
+        memberships,
+      },
+      message: "Incoming applications retrieved successfully.",
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 export async function listProjectTeamMemberships(
   request,
   response,
   next,
 ) {
   try {
-    const { projectId } = request.params;
+    const { id: projectId } = request.params;
 
     if (!ObjectId.isValid(projectId)) {
       return response.status(400).json({
