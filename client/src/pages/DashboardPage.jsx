@@ -4,7 +4,7 @@ import DashboardSection from "../components/dashboard/DashboardSection.jsx";
 import MembershipListItem from "../components/dashboard/MembershipListItem.jsx";
 import OwnedProjectListItem from "../components/dashboard/OwnedProjectListItem.jsx";
 import { getDashboard } from "../services/dashboardApi.js";
-import { updateMembershipStatus } from "../services/membershipApi.js";
+import { updateMembershipStatus, withdrawMembership, } from "../services/membershipApi.js";
 import styles from "./DashboardPage.module.css";
 
 const EMPTY_DASHBOARD = {
@@ -63,6 +63,35 @@ function DashboardPage() {
       setDashboard((current) => ({
         ...current,
         pendingIncoming: current.pendingIncoming.filter(
+          (membership) => String(membership._id) !== id,
+        ),
+      }));
+    } catch (error) {
+      setActionErrors((current) => ({
+        ...current,
+        [id]: error.message,
+      }));
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  async function handleWithdraw(membershipId) {
+    const id = String(membershipId);
+
+    setUpdatingId(id);
+    setActionErrors((current) => {
+      const next = { ...current };
+      delete next[id];
+      return next;
+    });
+
+    try {
+      await withdrawMembership(id);
+
+      setDashboard((current) => ({
+        ...current,
+        pendingOutgoing: current.pendingOutgoing.filter(
           (membership) => String(membership._id) !== id,
         ),
       }));
@@ -225,12 +254,19 @@ function DashboardPage() {
           title="Outgoing requests"
         >
           <ul className={styles.list}>
-            {pendingOutgoing.map((membership) => (
-              <MembershipListItem
-                key={String(membership._id)}
-                membership={membership}
-              />
-            ))}
+            {pendingOutgoing.map((membership) => {
+              const membershipId = String(membership._id);
+
+              return (
+                <MembershipListItem
+                  key={membershipId}
+                  actionError={actionErrors[membershipId]}
+                  isUpdating={updatingId === membershipId}
+                  membership={membership}
+                  onWithdraw={() => handleWithdraw(membershipId)}
+                />
+              );
+            })}
           </ul>
         </DashboardSection>
 

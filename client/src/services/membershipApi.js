@@ -25,3 +25,9 @@ export async function updateMembershipStatus(membershipId, status) {
 
   return response.data;
 }
+
+export async function withdrawMembership(membershipId) {
+  await apiRequest(`${MEMBERSHIPS_ENDPOINT}/${membershipId}`, {
+    method: "DELETE",
+  });
+}

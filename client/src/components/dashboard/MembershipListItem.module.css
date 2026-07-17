@@ -131,3 +131,23 @@
   color: #ffd4d8;
   font-size: 0.85rem;
 }
+
+.withdrawButton {
+  padding: 0.45rem 0.8rem;
+  color: #ffd4d8;
+  background-color: transparent;
+  border: 1px solid #b85c66;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.withdrawButton:hover {
+  background-color: rgb(184 92 102 / 18%);
+}
+
+.withdrawButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}

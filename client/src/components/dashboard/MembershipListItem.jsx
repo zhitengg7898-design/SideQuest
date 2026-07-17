@@ -9,6 +9,7 @@ function MembershipListItem({
   showApplicant,
   onAccept,
   onReject,
+  onWithdraw,
   isUpdating,
   actionError,
 }) {
@@ -16,6 +17,7 @@ function MembershipListItem({
   const applicant = membership.applicant;
   const projectId = project?._id;
   const showActions = Boolean(onAccept && onReject);
+  const showWithdraw = Boolean(onWithdraw);
 
   if (!projectId) {
     return null;
@@ -84,6 +86,17 @@ function MembershipListItem({
             </button>
           </div>
         ) : null}
+
+        {showWithdraw ? (
+          <button
+            className={styles.withdrawButton}
+            disabled={isUpdating}
+            onClick={onWithdraw}
+            type="button"
+          >
+            {isUpdating ? "Withdrawing..." : "Withdraw"}
+          </button>
+        ) : null}
       </div>
     </li>
   );
@@ -109,6 +122,7 @@ MembershipListItem.propTypes = {
   onReject: PropTypes.func,
   isUpdating: PropTypes.bool,
   actionError: PropTypes.string,
+  onWithdraw: PropTypes.func,
 };
 
 export default MembershipListItem;
