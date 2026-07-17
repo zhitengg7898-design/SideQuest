@@ -8,7 +8,8 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "rehash-passwords": "node scripts/rehashUserPasswords.js",
-    "assign-project-owners": "node scripts/assignProjectOwners.js"
+    "assign-project-owners": "node scripts/assignProjectOwners.js",
+    "seed-team-memberships": "node scripts/seedTeamMemberships.js"
   },
   "keywords": [],
   "author": "",

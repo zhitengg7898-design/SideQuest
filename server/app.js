@@ -9,6 +9,7 @@ import { createSessionMiddleware } from "./config/session.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { notFoundHandler } from "./middleware/notFoundHandler.js";
 import authRoutes from "./routes/authRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import teamMembershipRoutes from "./routes/teamMembershipRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -31,6 +32,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/team-memberships", teamMembershipRoutes);

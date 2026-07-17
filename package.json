@@ -13,6 +13,7 @@
     "server": "npm run dev --prefix server",
     "rehash-passwords": "npm run rehash-passwords --prefix server",
     "assign-project-owners": "npm run assign-project-owners --prefix server",
+    "seed-team-memberships": "npm run seed-team-memberships --prefix server",
     "format": "prettier --write .",
     "seed": "node database/seed/seedDatabase.js"
   },
