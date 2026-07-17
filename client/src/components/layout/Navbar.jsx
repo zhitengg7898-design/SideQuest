@@ -17,7 +17,7 @@ function Navbar() {
   return (
     <header className={styles.header}>
       <nav className={styles.nav} aria-label="Main navigation">
-        <NavLink className={styles.brand} to="/">
+        <NavLink className={styles.brand} to="/projects">
           SideQuest
         </NavLink>
 
