@@ -10,7 +10,10 @@ import styles from "./ProjectDetailsPage.module.css";
 function ProjectDetailsPage() {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  const { user: currentUser } = useAuth();
+  const {
+    user: currentUser,
+    isAuthenticated,
+  } = useAuth();
 
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -184,6 +187,9 @@ function ProjectDetailsPage() {
                 <ProjectRoleCard
                   key={role.roleId ?? role.title}
                   role={role}
+                  projectId={projectId}
+                  isAuthenticated={isAuthenticated}
+                  isOwner={isOwner}
                 />
               ))}
             </div>

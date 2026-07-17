@@ -1,15 +1,42 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
+import { createMembership } from "../../services/membershipApi.js";
 import styles from "./ProjectRoleCard.module.css";
 
-function ProjectRoleCard({ role }) {
+function ProjectRoleCard({
+  role,
+  projectId,
+  isAuthenticated,
+  isOwner,
+}) {
   const {
+    roleId,
     title,
     description,
     requiredSkills = [],
     experienceLevel,
     totalPositions,
   } = role;
+
+  const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
+  const [applicationError, setApplicationError] = useState("");
+
+  async function handleApply() {
+    setApplicationError("");
+    setIsApplying(true);
+
+    try {
+      await createMembership(projectId, roleId);
+      setHasApplied(true);
+    } catch (error) {
+      setApplicationError(error.message);
+    } finally {
+      setIsApplying(false);
+    }
+  }
 
   return (
     <article className={styles.card}>
@@ -45,19 +72,53 @@ function ProjectRoleCard({ role }) {
           </div>
         </div>
       )}
+
+      <div className={styles.applicationSection}>
+        {!isAuthenticated ? (
+          <Link className={styles.loginLink} to="/login">
+            Log in to apply
+          </Link>
+        ) : isOwner ? (
+          <p className={styles.ownerMessage}>
+            You own this project!
+          </p>
+        ) : hasApplied ? (
+          <p className={styles.successMessage} role="status">
+            Application submitted successfully!
+          </p>
+        ) : (
+          <button
+            className={styles.applyButton}
+            type="button"
+            onClick={handleApply}
+            disabled={isApplying}
+          >
+            {isApplying ? "Applying..." : "Apply for this role"}
+          </button>
+        )}
+
+        {applicationError && (
+          <p className={styles.errorMessage} role="alert">
+            {applicationError}
+          </p>
+        )}
+      </div>
     </article>
   );
 }
 
 ProjectRoleCard.propTypes = {
   role: PropTypes.shape({
-    roleId: PropTypes.string,
+    roleId: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
     requiredSkills: PropTypes.arrayOf(PropTypes.string),
     experienceLevel: PropTypes.string,
     totalPositions: PropTypes.number.isRequired,
   }).isRequired,
+  projectId: PropTypes.string.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+  isOwner: PropTypes.bool.isRequired,
 };
 
 export default ProjectRoleCard;
