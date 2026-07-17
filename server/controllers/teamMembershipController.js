@@ -166,7 +166,7 @@ export async function listProjectTeamMemberships(
   next,
 ) {
   try {
-    const { id: projectId } = request.params;
+    const { projectId } = request.params;
 
     if (!ObjectId.isValid(projectId)) {
       return response.status(400).json({
