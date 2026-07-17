@@ -265,6 +265,13 @@ export async function updateMembershipStatus(
       membership.projectId.toString(),
     );
 
+    if (!project) {
+      return response.status(404).json({
+        success: false,
+        message: "Associated project not found.",
+      });
+    }
+
     if (
       project.ownerId.toString() !==
       request.user._id.toString()
@@ -296,7 +303,7 @@ export async function updateMembershipStatus(
       message: "Application updated.",
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
